@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Railway MCQ Quiz — Loco Pilot &amp; ALP Exam Prep</title>
+  <meta name="description" content="Practice for Indian Railway Loco Pilot, ALP and other Railway exams with 200+ MCQ questions. Features timed quiz, instant results, and detailed review.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0f1e;
+      --surface: rgba(255,255,255,0.04);
+      --surface-hover: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.10);
+      --primary: #4f8ef7;
+      --primary-glow: rgba(79,142,247,0.35);
+      --secondary: #7c5cfc;
+      --accent: #00d4aa;
+      --text: #e8eaf6;
+      --text-muted: #8892a4;
+      --correct: #00c47d;
+      --wrong: #ff4d6a;
+      --correct-bg: rgba(0,196,125,0.12);
+      --wrong-bg: rgba(255,77,106,0.12);
+      --gold: #ffd166;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(79,142,247,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 90%, rgba(124,92,252,0.16) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(0,212,170,0.07) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    #app { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+    header {
+      width: 100%;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10,15,30,0.7);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-inner { display: flex; align-items: center; gap: 14px; max-width: 800px; width: 100%; }
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+      box-shadow: 0 4px 16px var(--primary-glow);
+    }
+    .logo-text { display: flex; flex-direction: column; }
+    .logo-title {
+      font-size: 18px; font-weight: 700;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      line-height: 1.1;
+    }
+    .logo-sub { font-size: 11px; color: var(--text-muted); font-weight: 400; letter-spacing: 0.5px; }
+    #timer-bar {
+      width: 100%; display: none;
+      background: rgba(10,15,30,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 77px; z-index: 99;
+    }
+    .timer-inner {
+      max-width: 800px; margin: 0 auto;
+      padding: 10px 20px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    #timer-display {
+      font-size: 16px; font-weight: 700; color: var(--accent);
+      display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    #timer-display.warning { color: var(--gold); animation: pulse-warn 1s infinite; }
+    #timer-display.danger { color: var(--wrong); animation: pulse-warn 0.5s infinite; }
+    @keyframes pulse-warn { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
+    #progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    #progress-bar-bg { height: 6px; background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; }
+    #progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 99px; transition: width 0.3s; width: 0%; }
+    #progress-label { font-size: 11px; color: var(--text-muted); text-align: right; }
+    #submit-btn-top {
+      padding: 8px 18px; font-size: 13px; font-weight: 600; font-family: inherit;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none; border-radius: 8px; color: white; cursor: pointer;
+      transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+    }
+    #submit-btn-top:hover { transform: translateY(-1px); box-shadow: 0 4px 16px var(--primary-glow); }
+    main { width: 100%; max-width: 800px; padding: 32px 16px 60px; display: flex; flex-direction: column; gap: 24px; }
+    #setup-screen { display: flex; flex-direction: column; gap: 0; }
+    .hero {
+      text-align: center; padding: 48px 24px 32px;
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px;
+      background: rgba(79,142,247,0.15); border: 1px solid rgba(79,142,247,0.3);
+      border-radius: 99px; font-size: 12px; font-weight: 600; color: var(--primary);
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(26px, 5vw, 42px); font-weight: 800; line-height: 1.15;
+      background: linear-gradient(135deg, #fff 30%, var(--primary) 70%, var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 480px; }
+    .stats-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .stat-chip {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 20px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 99px;
+      font-size: 13px; font-weight: 500; color: var(--text-muted);
+      backdrop-filter: blur(10px);
+    }
+    .stat-chip span { color: var(--text); font-weight: 700; }
+    .setup-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      backdrop-filter: blur(20px); padding: 32px;
+      display: flex; flex-direction: column; gap: 24px; box-shadow: var(--shadow);
+    }
+    .setup-card h2 { font-size: 20px; font-weight: 700; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 520px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .setup-card { padding: 20px; }
+      main { padding: 20px 12px 60px; gap: 16px; }
+      .hero { padding: 32px 16px 24px; }
+      .score-hero { padding: 28px 16px; }
+      .question-card { padding: 16px; }
+    }
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    .field label { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .field input[type=number] {
+      width: 100%; padding: 14px 18px;
+      background: rgba(255,255,255,0.06); border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text); font-family: inherit; font-size: 16px; font-weight: 600;
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+      -moz-appearance: textfield;
+    }
+    .field input[type=number]::-webkit-inner-spin-button, .field input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .field input[type=number]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,142,247,0.2); }
+    .field .hint { font-size: 11px; color: var(--text-muted); }
+    .quick-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .pill {
+      padding: 5px 14px; border: 1px solid var(--border); border-radius: 99px;
+      font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer;
+      transition: all 0.2s; background: transparent; font-family: inherit;
+    }
+    .pill:hover, .pill.active { background: rgba(79,142,247,0.18); border-color: var(--primary); color: var(--primary); }
+    .divider { height: 1px; background: var(--border); }
+    .start-btn {
+      padding: 16px; width: 100%; font-family: inherit; font-size: 16px; font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white; border: none; border-radius: var(--radius-sm); cursor: pointer;
+      position: relative; overflow: hidden; transition: all 0.25s;
+      box-shadow: 0 4px 24px rgba(79,142,247,0.4); letter-spacing: 0.3px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(79,142,247,0.5); }
+    .start-btn:active { transform: translateY(0); }
+    #quiz-screen { display: none; flex-direction: column; gap: 20px; }
+    .question-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      backdrop-filter: blur(20px); padding: 24px;
+      transition: transform 0.3s ease; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .q-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+    .q-num {
+      min-width: 36px; height: 36px;
+      background: linear-gradient(135deg, rgba(79,142,247,0.25), rgba(124,92,252,0.25));
+      border: 1px solid rgba(79,142,247,0.3); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: var(--primary); flex-shrink: 0;
+    }
+    .q-text { font-size: 15px; font-weight: 500; line-height: 1.6; color: var(--text); padding-top: 6px; }
+    .options-grid { display: flex; flex-direction: column; gap: 10px; }
+    .option-label {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;
+      transition: all 0.2s; background: rgba(255,255,255,0.02);
+    }
+    .option-label:hover { background: var(--surface-hover); border-color: rgba(79,142,247,0.4); transform: translateX(2px); }
+    .option-label input[type=radio] { display: none; }
+    .option-marker {
+      min-width: 32px; height: 32px; border-radius: 8px;
+      background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: var(--text-muted); transition: all 0.2s; flex-shrink: 0;
+    }
+    .option-text { font-size: 14px; font-weight: 400; line-height: 1.5; }
+    .option-label.selected { background: rgba(79,142,247,0.12); border-color: var(--primary); }
+    .option-label.selected .option-marker { background: var(--primary); border-color: var(--primary); color: white; }
+    #review-screen { display: none; flex-direction: column; gap: 24px; }
+    .score-hero {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      backdrop-filter: blur(20px); padding: 36px 24px; text-align: center;
+      position: relative; overflow: hidden; box-shadow: var(--shadow);
+    }
+    .score-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(79,142,247,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .score-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; }
+    .score-big { font-size: clamp(48px, 12vw, 80px); font-weight: 800; line-height: 1; background: linear-gradient(135deg, var(--gold), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .score-denom { font-size: 20px; color: var(--text-muted); font-weight: 500; }
+    .score-message { font-size: 16px; font-weight: 600; color: var(--text); margin-top: 12px; }
+    .score-stats { display: flex; gap: 12px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+    .score-stat { padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .correct-stat { background: var(--correct-bg); color: var(--correct); border: 1px solid rgba(0,196,125,0.25); }
+    .wrong-stat { background: var(--wrong-bg); color: var(--wrong); border: 1px solid rgba(255,77,106,0.25); }
+    .skip-stat { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--border); }
+    .score-percentage { font-size: 18px; font-weight: 700; margin-top: 4px; }
+    .pct-bar-wrap { width: 200px; height: 8px; background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; margin: 12px auto 0; }
+    .pct-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--correct), var(--accent)); transition: width 1s ease; }
+    .action-row { display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+    .btn-secondary {
+      padding: 12px 24px; font-family: inherit; font-size: 14px; font-weight: 600;
+      background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text); cursor: pointer; transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: var(--surface-hover); border-color: rgba(255,255,255,0.2); }
+    .btn-primary {
+      padding: 12px 24px; font-family: inherit; font-size: 14px; font-weight: 600;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none; border-radius: var(--radius-sm); color: white; cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 4px 16px var(--primary-glow);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px var(--primary-glow); }
+    .review-section-title {
+      font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .review-section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .review-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      backdrop-filter: blur(10px); padding: 20px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .review-q-text { font-size: 14px; font-weight: 600; line-height: 1.6; display: flex; gap: 10px; }
+    .review-q-num {
+      min-width: 28px; height: 28px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+    .correct-q { background: var(--correct-bg); color: var(--correct); }
+    .wrong-q { background: var(--wrong-bg); color: var(--wrong); }
+    .skip-q { background: rgba(255,255,255,0.06); color: var(--text-muted); }
+    .review-options { display: flex; flex-direction: column; gap: 6px; }
+    .review-opt {
+      padding: 10px 14px; border-radius: 8px; font-size: 13px; border: 1.5px solid transparent;
+      display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03);
+    }
+    .review-opt.correct-opt { background: var(--correct-bg); border-color: rgba(0,196,125,0.3); color: var(--correct); font-weight: 600; }
+    .review-opt.wrong-opt { background: var(--wrong-bg); border-color: rgba(255,77,106,0.3); color: var(--wrong); font-weight: 600; }
+    .opt-icon { font-size: 14px; flex-shrink: 0; }
+    .not-answered-tag { font-size: 12px; font-weight: 600; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px; }
+    .fade-in { animation: fade-in 0.4s ease; }
+    @keyframes fade-in { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+    #toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: rgba(30,36,54,0.95); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 20px; font-size: 14px; font-weight: 500;
+      color: var(--text); backdrop-filter: blur(20px); z-index: 999;
+      transition: transform 0.3s ease; max-width: 340px; text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    #timeup-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(10,15,30,0.85); backdrop-filter: blur(8px);
+      z-index: 200; align-items: center; justify-content: center;
+    }
+    #timeup-overlay.show { display: flex; }
+    .timeup-box {
+      background: rgba(20,26,45,0.95); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 40px 32px; text-align: center; max-width: 360px; width: 90%;
+      animation: fade-in 0.3s ease;
+    }
+    .timeup-box .big-icon { font-size: 56px; margin-bottom: 16px; }
+    .timeup-box h2 { font-size: 28px; font-weight: 800; color: var(--wrong); margin-bottom: 8px; }
+    .timeup-box p { color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="header-inner">
+      <div class="logo-icon">🚂</div>
+      <div class="logo-text">
+        <span class="logo-title">Railway MCQ Quiz</span>
+        <span class="logo-sub">Loco Pilot &amp; ALP Exam Preparation</span>
+      </div>
+    </div>
+  </header>
+
+  <div id="timer-bar">
+    <div class="timer-inner">
+      <div id="timer-display">⏱ 00:00</div>
+      <div id="progress-wrap">
+        <div id="progress-bar-bg"><div id="progress-bar-fill"></div></div>
+        <div id="progress-label">0 / 0 answered</div>
+      </div>
+      <button id="submit-btn-top" onclick="confirmSubmit()">Submit Quiz</button>
+    </div>
+  </div>
+
+  <main>
+    <div id="setup-screen">
+      <div class="hero fade-in">
+        <div class="hero-badge">🎯 Indian Railways Exam Prep</div>
+        <h1>Master Railway<br>MCQ Questions</h1>
+        <p>Practice with authentic questions covering AC/DC traction, brakes, signalling, rules &amp; regulations — all topics tested in Loco Pilot &amp; ALP exams.</p>
+        <div class="stats-row">
+          <div class="stat-chip">📚 <span>200+</span> Questions</div>
+          <div class="stat-chip">⚡ <span>Random</span> Shuffle</div>
+          <div class="stat-chip">🏆 <span>Instant</span> Results</div>
+        </div>
+      </div>
+
+      <div class="setup-card fade-in">
+        <h2>Configure Your Quiz</h2>
+        <div class="form-grid">
+          <div class="field">
+            <label for="numQ">Number of Questions</label>
+            <input type="number" id="numQ" placeholder="e.g. 25" min="1" max="999" value="25">
+            <div class="hint">Choose how many questions to practice</div>
+            <div class="quick-pills">
+              <button class="pill" id="p10" onclick="setNum(10)">10</button>
+              <button class="pill active" id="p25" onclick="setNum(25)">25</button>
+              <button class="pill" id="p50" onclick="setNum(50)">50</button>
+              <button class="pill" id="p100" onclick="setNum(100)">100</button>
+              <button class="pill" id="pall" onclick="setNum(99999)">All</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="timeMin">Timer (minutes)</label>
+            <input type="number" id="timeMin" placeholder="e.g. 30" min="1" max="999" value="30">
+            <div class="hint">Set your desired duration</div>
+            <div class="quick-pills">
+              <button class="pill" id="t15" onclick="setTime(15)">15m</button>
+              <button class="pill active" id="t30" onclick="setTime(30)">30m</button>
+              <button class="pill" id="t60" onclick="setTime(60)">60m</button>
+              <button class="pill" id="t90" onclick="setTime(90)">90m</button>
+            </div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <button class="start-btn" onclick="startQuiz()">🚀 Start Quiz</button>
+      </div>
+    </div>
+
+    <div id="quiz-screen"></div>
+    <div id="review-screen"></div>
+  </main>
+</div>
+
+<div id="timeup-overlay">
+  <div class="timeup-box">
+    <div class="big-icon">⏰</div>
+    <h2>Time's Up!</h2>
+    <p>Your quiz time has ended. Let's see how you did!</p>
+    <button class="btn-primary" style="width:100%;padding:14px;font-family:inherit;" onclick="closeTimeUp()">See My Results</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+const quizData = [
+{"question":"During normal operation, the Shunting Mode Switch (HSM) should be kept on position in conventional locos.","A":"1","B":"0","C":"3","D":"Auto","answer":"A"},
+{"question":"Crew Links will be prepared by:","A":"Division","B":"Depot","C":"Head quarter","D":"CCC","answer":"A"},
+{"question":"In three phase EMU/MEMU, which protection is provided to safeguard the pantograph in Unwired turn out?","A":"ORD","B":"ADD","C":"ECN","D":"RDM","answer":"A"},
+{"question":"Three inductors of 8 H, 3 H and 5 H are connected in series, the equivalent inductance is:","A":"16 H","B":"12 H","C":"8 H","D":"10 H","answer":"A"},
+{"question":"Lead acid cell should never be discharged beyond:","A":"1.8 V","B":"1.9 V","C":"2 V","D":"2.1 V","answer":"A"},
+{"question":"In a battery, cells are connected in series in order to:","A":"Increase the voltage rating","B":"Increase the current rating","C":"Increase the life of the cells","D":"None of the above","answer":"A"},
+{"question":"During charging of a battery, specific gravity of the electrolyte of a lead-acid battery:","A":"Increases","B":"Decreases","C":"Remains same","D":"Becomes zero","answer":"A"},
+{"question":"Formula for electric power is:","A":"P=VI","B":"P=I/V","C":"P=V/I","D":"None of these","answer":"A"},
+{"question":"The practical method of calculating section capacity is:","A":"Charting of trains","B":"Planning of trains","C":"Forecast of trains","D":"None of the above","answer":"A"},
+{"question":"Line capacity of a section depends upon:","A":"No. of trains that can run in a calendar day","B":"No. of trains that can run in a week","C":"No. of trains that can run in a month","D":"No. of trains that can run 00:00 to 06:00","answer":"A"},
+{"question":"According to AC Traction Manual Vol. III, Leave Reserve on Chief Loco Inspectors is:","A":"0.125","B":"0.1","C":"0.15","D":"0.05","answer":"A"},
+{"question":"Kinetic energy equation is given by:","A":"½ MV²","B":"mgh","C":"VI","D":"None of these","answer":"A"},
+{"question":"In three phase EMU, the maximum pressure that can be indicated on the BC gauge in the DTC is:","A":"1.2 kg/cm²","B":"1.6 kg/cm²","C":"0.8 kg/cm²","D":"1.8 kg/cm²","answer":"A"},
+{"question":"In three phase MEMU, holding brake pressure in DMC is:","A":"1.2 kg/cm²","B":"1.6 kg/cm²","C":"0.8 kg/cm²","D":"1.8 kg/cm²","answer":"A"},
+{"question":"During Loco link preparation, what percentage of conventional AC locos are allotted for Major Schedules?","A":"10","B":"15","C":"30","D":"5","answer":"A"},
+{"question":"In three phase MEMU/EMU, traction motor maximum current and maximum voltage are:","A":"175A, 1171V","B":"1171A, 175V","C":"1100A, 750V","D":"1300A, 750V","answer":"A"},
+{"question":"In Crew Links, running staff should be granted how many 30-hour HQ rests?","A":"4","B":"3","C":"5","D":"6","answer":"A"},
+{"question":"In Crew Link, crew should not be allowed to work more than how many consecutive nights?","A":"4","B":"6","C":"5","D":"3","answer":"A"},
+{"question":"According to AC Traction Manual Vol. III, working range for high reach pantograph from contact wire for satisfactory current collection:","A":"4.58 to 7.57 meters","B":"4.58 to 7.07 meters","C":"4.58 to 7.50 meters","D":"4.50 to 7.57 meters","answer":"A"},
+{"question":"In three phase MEMU, DMH will come into service when speed is:","A":"6 kmph or more","B":"10 kmph or more","C":"15 kmph or more","D":"Stand still (speed 0)","answer":"A"},
+{"question":"While preparing crew links, the running duty of LP/ALP from train departure to arrival should be limited to:","A":"8 hours","B":"9 hours","C":"10 hours","D":"12 hours","answer":"A"},
+{"question":"In three phase EMU/MEMU, if rake is rolling back with Reverser in 'F' direction and speed is above 10 kmph, which brake will apply?","A":"AUTO","B":"Regenerative","C":"EP","D":"Parking","answer":"A"},
+{"question":"Ohm's law is applicable at:","A":"Constant temperature","B":"Variable temperature","C":"Variable pressure","D":"Constant pressure","answer":"A"},
+{"question":"The conductivity of a conductor can be increased by:","A":"Decreasing its temperature","B":"Increasing its temperature","C":"Decreasing its vibration","D":"Increasing its vibration","answer":"A"},
+{"question":"In three phase EMU/MEMU, which switch is provided for communication within Basic unit?","A":"ECN","B":"ETB","C":"TCMS","D":"MCU","answer":"A"},
+{"question":"DC generator works on the principle of:","A":"Faraday's law of electromagnetic induction","B":"Lenz's law","C":"Ohm's law","D":"None of the above","answer":"A"},
+{"question":"An insulator should have:","A":"High resistance","B":"High conductivity","C":"High conductance","D":"All of the above","answer":"A"},
+{"question":"Power plan is prepared by:","A":"HQs","B":"Divisional","C":"Lobby","D":"Shed","answer":"A"},
+{"question":"Line current versus phase current in case of star connection is:","A":"IL = IPH","B":"IL = √3IPH","C":"IL = IPH/√3IPH","D":"√3IL = IPH","answer":"A"},
+{"question":"In BMBS wagon, another name for APM is:","A":"Load sensing device","B":"Load/Empty device","C":"Pressure distributor","D":"Wagon supervisor","answer":"A"},
+{"question":"In three phase MEMU, to apply EP brake, what must be operated to braking side?","A":"Master controller handle","B":"Brake control handle","C":"TMR side brake valve","D":"EMR Push button","answer":"A"},
+{"question":"Number of APMs provided in each BMBS wagon:","A":"ONE","B":"TWO","C":"ONE for each trolley","D":"TWO for each trolley","answer":"A"},
+{"question":"Hunting in synchronous motor occurs due to:","A":"Sudden load variations","B":"Changes in excitation","C":"Both A & B","D":"None of these","answer":"A"},
+{"question":"Elastomeric pads are provided for:","A":"To reduce wheel flange wear","B":"To improve ride index","C":"To increase buffer height","D":"To protect wheel base","answer":"A"},
+{"question":"The direction of rotation of a three phase induction motor can be reversed by:","A":"Transposing any two leads from supply","B":"Transposing any two leads from slip rings","C":"Transposing all the three leads from the supply","D":"Disconnecting any one phase","answer":"A"},
+{"question":"Apparent power is measured in terms of:","A":"VA","B":"V","C":"A","D":"None of these","answer":"A"},
+{"question":"In three phase EMU/MEMU, if emergency OFF push button is operated, what actions take place in all MCs?","A":"VCB trip, Panto lower","B":"VCB trip, BP drop","C":"VCB trip, Panto lower, BP drop","D":"Only BP drop","answer":"A"},
+{"question":"In parallel circuit, which quantity remains same throughout the circuit?","A":"Voltage","B":"Current","C":"Power","D":"Both current & voltage","answer":"A"},
+{"question":"In three phase MEMU, in case of pantograph raised and no tension, panto icon shows which colour on DDU?","A":"White background","B":"Blue background","C":"Red background","D":"Yellow background","answer":"A"},
+{"question":"If Crew working hours is less than 5 hours, what rest is given at out station?","A":"Working hours + 1 Hour","B":"6 Hours","C":"8 Hours","D":"None of the above","answer":"A"},
+{"question":"Each truck of a LHB coach contains how many FIBA units?","A":"One","B":"Two","C":"Four","D":"Eight","answer":"A"},
+{"question":"In Air brake system, brakes will apply when rate of BP pressure drop is above in 6 seconds:","A":"0.6 kg/cm²","B":"0.5 kg/cm²","C":"0.3 kg/cm²","D":"0.8 kg/cm²","answer":"A"},
+{"question":"What type of brake system is used in wagons?","A":"Air brake system","B":"Hydraulic brake system","C":"Mechanical brake system","D":"Disc brake system","answer":"A"},
+{"question":"In three phase EMU/MEMU, what type of bogie is provided?","A":"BO-BO Fabricated & I bolster","B":"BO-BO casted","C":"Bo-BO 'H' shape bolster","D":"BO-BO casted H shape bolster","answer":"A"},
+{"question":"In Air brake Goods wagon, if load/empty handle is kept in Load position for empty stock, what happens?","A":"Brake Binding","B":"Poor Brake power","C":"Isolation of Brakes","D":"Efficient Brake power","answer":"A"},
+{"question":"Crew review proposal is approved in division by:","A":"DRM","B":"ADRM","C":"GM","D":"Sr.DEE","answer":"A"},
+{"question":"Resistances can be measured with the help of a:","A":"Ohmmeter and Multimeter","B":"Wattmeter","C":"Voltmeter","D":"Ammeter","answer":"A"},
+{"question":"One unit of BLC wagon has how many car B units?","A":"Three","B":"Five","C":"Two","D":"Four","answer":"A"},
+{"question":"In a LHB formation, the capacity of each power car converter is:","A":"500 kVA","B":"750 kVA","C":"600 kVA","D":"900 kVA","answer":"A"},
+{"question":"In a LHB coach, 'ASD' stands for:","A":"Anti Slip Device","B":"Anti Slope Device","C":"Anti Slack Device","D":"Anti Sleep Device","answer":"A"},
+{"question":"In LHB coaches, the ACP pull box is located in:","A":"Inside each coach cabin/bay","B":"On coach end wall panel","C":"Above each coach door","D":"None of these","answer":"A"},
+{"question":"Brake power of air brake for Rajdhani coaches from out station is:","A":"0.9","B":"1","C":"0.95","D":"0.85","answer":"A"},
+{"question":"In conventional wagons, the empty/load handle is kept in 'load' position when tare weight is more than how many tons?","A":"42.5","B":"22.5","C":"100","D":"40.5","answer":"A"},
+{"question":"Piston Stroke of Brake Cylinder of conventional wagon in empty condition is:","A":"85 mm ± 10 mm","B":"75 mm ± 10 mm","C":"65 mm ± 10 mm","D":"105 mm ± 10 mm","answer":"A"},
+{"question":"In BMBS wagons, in place of load/empty handle, what is provided?","A":"APM","B":"C3W Distributor valve","C":"BCM","D":"APJ","answer":"A"},
+{"question":"In BMBS wagon, piston stroke indicator projected outside indicates:","A":"BC applied condition","B":"BC released condition","C":"BP charged condition","D":"BC isolated condition","answer":"A"},
+{"question":"White dumble mark on end wall panels of coaches represents:","A":"Coach fitted with enhanced capacity screw coupling","B":"Anti telescopic coach body","C":"Coach fitted with CBC","D":"Air brake train","answer":"A"},
+{"question":"The main advantage of an auto-transformer over a two winding transformer is:","A":"Saving in winding material","B":"Hysteresis losses are reduced","C":"Copper losses are negligible","D":"Eddy losses are totally eliminated","answer":"A"},
+{"question":"In a LHB coach, in-built slack adjuster in brake cylinder has:","A":"Single acting mechanism","B":"Double acting mechanism","C":"No slack adjuster","D":"None of these","answer":"A"},
+{"question":"In LHB/ICF coaches, fire in Pantry car/AC coaches — which device will act and BP pressure will drop?","A":"VESDA","B":"FIBA","C":"PASD","D":"PEV","answer":"A"},
+{"question":"Unit of voltage is:","A":"Volt","B":"Watt","C":"Coulomb","D":"Ampere","answer":"A"},
+{"question":"Wheel Floating means:","A":"Wheel lifting above from track","B":"Wheel removing","C":"Wheel hanging","D":"Wheel running","answer":"A"},
+{"question":"Haulage capacity of a BOXN rake with a WAG-5 loco (TAO traction motors) on level road:","A":"5,400 tonnes","B":"3,800 tonnes","C":"5,800 tonnes","D":"6,000 tonnes","answer":"A"},
+{"question":"ART/MRVs are to be ordered by:","A":"Divisional Control office","B":"CCC office","C":"CRS","D":"All of the above","answer":"A"},
+{"question":"If gross clearance between ODC & fixed structure is 228.6 mm and above, ODC is called:","A":"'A' class ODC","B":"'B' class ODC","C":"'C' class ODC","D":"All of the above","answer":"A"},
+{"question":"In conventional locomotives, if auto-regression takes place at 15 KMPH, ensure HSM is on position:","A":"1","B":"0","C":"3","D":"Auto","answer":"A"},
+{"question":"Minimum distance of OHE structure behind a signal is:","A":"10 m","B":"20 m","C":"30 m","D":"50 m","answer":"A"},
+{"question":"The number of cells per battery in WDG4G locomotives is:","A":"16","B":"8","C":"20","D":"12","answer":"A"},
+{"question":"The number of batteries provided in WDG4G locomotives is:","A":"2","B":"4","C":"8","D":"16","answer":"A"},
+{"question":"Maximum capacity of fire extinguisher in three phase locomotives is:","A":"22.5 Kg","B":"25 kg","C":"35 kg","D":"45 Kg","answer":"A"},
+{"question":"Implantation adopted for multi cantilever arrangement is:","A":"3.0 m","B":"3.2 m","C":"2.5 m","D":"2.75 m","answer":"A"},
+{"question":"In RDAS provided loco, warning voice message will be given if loco pilot is sleepy/yawning for more than how many seconds?","A":"8","B":"5","C":"10","D":"15","answer":"A"},
+{"question":"In WDG4G locomotives, the radiator fans are driven by:","A":"AC motors","B":"Gear","C":"Belts","D":"Engine","answer":"A"},
+{"question":"In WDG4G locomotives, Multi Task Circuit Breaker (MTB) provides power and protection to:","A":"EAB","B":"Air Dryer","C":"Both 'A' & 'B'","D":"None","answer":"A"},
+{"question":"After extinguishing fire in three phase locomotives, what is to be pressed on FDU?","A":"FDU reset","B":"FDU fault","C":"FDU healthy","D":"None","answer":"A"},
+{"question":"TCAS is renamed as:","A":"Kavach","B":"Rakshak","C":"Sevak","D":"Parirakshak","answer":"A"},
+{"question":"Class A fire extinguisher is:","A":"Used on ordinary combustibles such as wood and paper","B":"Used on flammable liquids","C":"Used on electrically energized fire","D":"Used on non-flammable metals","answer":"A"},
+{"question":"The Railway Servants (Discipline & Appeal) Rules came into force in which year?","A":"1968","B":"1972","C":"1978","D":"1966","answer":"A"},
+{"question":"Number of disc brakes provided on each axle of LHB coach:","A":"2","B":"4","C":"8","D":"6","answer":"A"},
+{"question":"Controlling MCB for LTR in conventional EMU/MEMU:","A":"2.5 A MCB","B":"5 A MCB","C":"15 A MCB","D":"2.5 Sync MCB","answer":"A"},
+{"question":"Brake cylinder filling time for testing C3W/KE type DV after full-service application:","A":"3 to 5 sec","B":"10 to 15 sec","C":"5 to 10 sec","D":"3 to 9 sec","answer":"A"},
+{"question":"Maximum brake cylinder pressure of LHB coach is:","A":"3.0 ± 0.1 kg/cm²","B":"3.8 ± 0.1 kg/cm²","C":"2.8 ± 0.1 kg/cm²","D":"4.0 ± 0.1 kg/cm²","answer":"A"},
+{"question":"Number of electrical couplers between coaches of conventional MEMU:","A":"4","B":"5","C":"6","D":"3","answer":"A"},
+{"question":"Main compressor safety valve setting in conventional EMU/MEMU:","A":"8 kg/cm²","B":"7 kg/cm²","C":"9 kg/cm²","D":"6-7 kg/cm²","answer":"A"},
+{"question":"When brake indicators show RED in LHB coaches, brakes will be in:","A":"Applied condition","B":"Released condition","C":"Brake indicator defective","D":"None of the above","answer":"A"},
+{"question":"Which relay will protect transformer in event of hot gases in conventional EMU/MEMU?","A":"BIR","B":"TTR","C":"KF1 & KF2","D":"OVR","answer":"A"},
+{"question":"During which circumstance is an inquiry NOT necessary?","A":"Charges admitted by charged official","B":"Charges not admitted by Charged official","C":"Charges prepared by disciplinary authority","D":"None of these","answer":"A"},
+{"question":"The appeal shall be preferred to any higher authority other than the:","A":"Disciplinary Authority","B":"DRM","C":"Appellate Authority","D":"GM","answer":"A"},
+{"question":"In HYBRID coaches during Air spring failure, Levelling valve lever will be:","A":"Inclined","B":"Horizontal","C":"Perpendicular","D":"None of the above","answer":"A"},
+{"question":"Rule No. 9 of The Railway Servants (D&A) Rules deals with procedure for imposing which penalty?","A":"Major","B":"Minor","C":"Suspension","D":"Revoke of Suspension","answer":"A"},
+{"question":"The appeal against an order of the Disciplinary Authority can be preferred by the Appellant in:","A":"Own name","B":"Disciplinary Authority","C":"Appellate Authority","D":"GM","answer":"A"},
+{"question":"PEASD in LHB coaches stands for:","A":"Passenger Emergency Alarm Signaling Device","B":"Passenger Emergency Alert Signaling Device","C":"Passenger Emergency Alarm Service Device","D":"None of the above","answer":"A"},
+{"question":"Air springs are provided in LHB coaches to maintain:","A":"Secondary suspension","B":"Primary suspension","C":"Both primary & secondary suspension","D":"Extra suspension","answer":"A"},
+{"question":"Which form is used to appoint a Presenting Officer?","A":"SF-8","B":"SF-4","C":"SF-1","D":"SF-2","answer":"A"},
+{"question":"While working a coaching train, if train is detained above 30 minutes due to loco trouble, the failure is called:","A":"Statistical failure","B":"Non-Statistical failure","C":"Asset Failure","D":"None","answer":"A"},
+{"question":"In three phase locomotive, normal position of switch no. 152 is:","A":"'0'","B":"'1'","C":"NORM","D":"None of the above","answer":"A"},
+{"question":"In WDG4G locomotives, the water sight glass is located on:","A":"'A' side of Radiator cab","B":"'B' side of Radiator cab","C":"'A' side of Blower cab","D":"'B' side of Blower cab","answer":"A"},
+{"question":"In AC traction, which device distributes current between catenary wire & contact wire?","A":"C Jumper","B":"F jumper","C":"G jumper","D":"S jumper","answer":"A"},
+{"question":"In three phase locomotive, when parking brakes are applied, parking brake gauge shows:","A":"0 Kg/cm²","B":"4 Kg/cm²","C":"3.5 Kg/cm²","D":"6 Kg/cm²","answer":"A"},
+{"question":"In conventional locos, the HSM switch has how many positions?","A":"0, 1","B":"0, 1, 2, 3","C":"1, 2, 3, 4","D":"None of the above","answer":"A"},
+{"question":"Performance Guarantee (PG) is equivalent to what percentage of Agreement Value?","A":"5%","B":"10%","C":"2.5%","D":"15%","answer":"A"},
+{"question":"According AC Traction Manual Vol. III, percentage for ALTL of LP Goods/ALP Goods during review of running staff:","A":"10%","B":"20%","C":"15%","D":"5%","answer":"A"},
+{"question":"Loss of three fingers of one hand causes what percentage of loss of earning capacity?","A":"30%","B":"40%","C":"50%","D":"20%","answer":"A"},
+{"question":"Loss of thumb causes what percentage of loss of earning capacity?","A":"30%","B":"40%","C":"50%","D":"20%","answer":"A"},
+{"question":"BP pressure drop greater than or equal to which value is the sensitivity point of distributor valve?","A":"0.6 kg/cm² in 6 sec","B":"0.9 kg/cm² in 6 sec","C":"0.6 kg/cm² in 60 sec","D":"1 kg/cm² in 6 sec","answer":"A"},
+{"question":"Sensitivity of distributor valve — reduction of how much BP pressure within how many seconds?","A":"0.6 kg/cm²; 6 sec","B":"0.3 kg/cm²; 6 sec","C":"0.6 kg/cm²; 60 sec","D":"0.3 kg/cm²; 60 sec","answer":"A"},
+{"question":"The officer at the accident site shall relay information to control every:","A":"1 hour","B":"30 minutes","C":"2 hours","D":"3 hours","answer":"A"},
+{"question":"Maximum wage period for payment of wages:","A":"1 Month","B":"40 days","C":"45 Days","D":"60 Days","answer":"A"},
+{"question":"Claim for compensation shall be made within how much time from date of accident?","A":"1 year","B":"2 years","C":"6 months","D":"3 years","answer":"A"},
+{"question":"'C' Grade loco pilot shall be monitored by CLI once in how many months?","A":"1","B":"4","C":"3","D":"2","answer":"A"},
+{"question":"Maximum brake cylinder pressure in Auto Handle Min. position in WDG4G locomotives:","A":"1.1 kg/cm²","B":"2.5 kg/cm²","C":"3.5 kg/cm²","D":"3.8 kg/cm²","answer":"A"},
+{"question":"After stopping a full length goods train, wait how many minutes to release brakes for twin pipe brake system?","A":"1.5 minutes","B":"2.5 minutes","C":"3.5 minutes","D":"3.25 minutes","answer":"A"},
+{"question":"Number of days handling to be given to Loco pilot in EMU/MEMU after initial course:","A":"10","B":"12","C":"15","D":"5","answer":"A"},
+{"question":"SM shall issue caution order restricting speed to what kmph when 'Lurch' is reported by loco pilot?","A":"10","B":"15","C":"8","D":"None","answer":"A"},
+{"question":"In three phase locomotive, cab changing must be done within how many minutes otherwise CE will switch OFF?","A":"10","B":"5","C":"15","D":"20","answer":"A"},
+{"question":"Clearance between brake block and wheel tyre should be how many mm in release position?","A":"10 mm","B":"5 mm","C":"15 mm","D":"20 mm","answer":"A"},
+{"question":"Rail fracture of less than 30 mm — speed of first train and subsequent trains:","A":"10; 15 kmph","B":"25; 8 kmph","C":"15; 40 kmph","D":"None","answer":"A"},
+{"question":"Cash Award given under Kamalapati Tripathi Rajbhasha Swarna Padak is Rs:","A":"10,000","B":"1,000","C":"1,00,000","D":"10,00,000","answer":"A"},
+{"question":"When crew changing point is 1 hr away, duty hours should not exceed:","A":"12 hrs","B":"11 hrs","C":"10 hrs","D":"9 hrs","answer":"A"},
+{"question":"Number of chapters in station working rules as per Operating Manual:","A":"12","B":"10","C":"7","D":"5","answer":"A"},
+{"question":"In WAG-9 with parking brakes, number of direct brake cylinders and parking brake cylinders:","A":"12; 4","B":"12; 8","C":"4; 12","D":"12; 6","answer":"A"},
+{"question":"Around how many PR hours in a month to be granted to running staff?","A":"120","B":"90","C":"150","D":"110","answer":"A"},
+{"question":"In three phase locomotive, during cooling mode which contactor is in closed condition?","A":"126","B":"218","C":"126 & 218","D":"None of the above","answer":"A"},
+{"question":"In NPS system, the contribution by the Central Government shall be:","A":"14% basic pay plus DA","B":"10% basic pay plus DA","C":"14% basic pay","D":"10% basic pay","answer":"A"},
+{"question":"Operating voltage of compartment fans & lights in conventional EMU/MEMU:","A":"141 V single phase AC","B":"266 V single phase AC","C":"141 V AC","D":"266 V AC","answer":"A"},
+{"question":"In FOIS, shunting locos utilisation calculation — how many km reckoned per hour?","A":"15 Kms","B":"30 Kms","C":"50 Kms","D":"60 Kms","answer":"A"},
+{"question":"Turn out time of MRV with Direct Dispatch and indirect dispatch (in minutes):","A":"15, 20","B":"20, 25","C":"10, 15","D":"30, 45","answer":"A"},
+{"question":"In WAG-12B locomotive, in shut down mode cab/machine room lights will be ON for how many minutes?","A":"15","B":"10","C":"5","D":"Continuously","answer":"A"},
+{"question":"Maximum tension length in AC traction (regulated OHE):","A":"1500 m","B":"1600 m","C":"1000 m","D":"750 m","answer":"A"},
+{"question":"No Railway Servant shall speculate in stocks as per Rule No. ___ of Railway Services (Conduct) Rules, 1966:","A":"16","B":"18","C":"22","D":"21","answer":"A"},
+{"question":"Distance from home signal to Block Section Limit Board (BSLB) shall not be less than how many meters?","A":"180","B":"120","C":"400","D":"580","answer":"A"},
+{"question":"Minimum steady clearance on loop lines (in mm):","A":"180","B":"250","C":"160","D":"100","answer":"A"},
+{"question":"Width of the Faiveley AM-12 type pantograph:","A":"1800 mm","B":"2032 mm","C":"2000 mm","D":"1200 mm","answer":"A"},
+{"question":"In WAG-12B locomotive, E block DC link voltage is:","A":"1800 volts","B":"2600 volts","C":"2800 volts","D":"2900 volts","answer":"A"},
+{"question":"The Official Language Act 1963 was amended in:","A":"1967","B":"1963","C":"1947","D":"1965","answer":"A"},
+{"question":"Gradient considered dangerous for shunting roller bearing wagons and non-roller bearing wagons:","A":"1in400; 1in260","B":"1in100; 1in150","C":"1in300; 1in450","D":"None","answer":"A"},
+{"question":"During gradation, marks deducted if found with mobile phone switched on:","A":"2","B":"20","C":"10","D":"5","answer":"A"},
+{"question":"Number of times Regular Hindi exams are conducted in a year:","A":"2","B":"3","C":"4","D":"1","answer":"A"},
+{"question":"In Train-18, number of loops that must be healthy to avoid emergency brake application:","A":"2","B":"4","C":"6","D":"8","answer":"A"},
+{"question":"In conventional locomotives, during compressor capability test, BP gauge should show between:","A":"2.5 & 3.5 kg/cm²","B":"1.5 & 2.5 kg/cm²","C":"3.0 & 3.5 kg/cm²","D":"None of the above","answer":"A"},
+{"question":"For checking cab emergency lights not glowing in conventional EMU/MEMU:","A":"2.5 A MCB","B":"5 A MCB","C":"15 A MCB","D":"2.5 Sync MCB","answer":"A"},
+{"question":"Line Voltmeter showing '0' with VCB closed in conventional EMU/MEMU — check which MCB?","A":"2.5 A MCB","B":"5 A MCB","C":"15 A MCB","D":"2.5 Sync MCB","answer":"A"},
+{"question":"To isolate MCP of any Motor coach in conventional EMU/MEMU, keep which MCB in OFF?","A":"2.5A SYN","B":"5A SYN","C":"15A SYN","D":"2.5A","answer":"A"},
+{"question":"In a LHB coach, capacity of auxiliary reservoir tank:","A":"200 litres","B":"150 litres","C":"100 litres","D":"75 litres","answer":"A"},
+{"question":"Default ceiling speed for Reverse (RV) mode in KAVACH system:","A":"25 kmph","B":"50 kmph","C":"100 kmph","D":"15 kmph","answer":"A"},
+{"question":"Speed of a class 'C' ODC by day in BG:","A":"25 kmph","B":"45 kmph","C":"20 kmph","D":"75 kmph","answer":"A"},
+{"question":"LOPS setting of WDG4 locomotive in 8th notch:","A":"25-29 psi","B":"8-12 psi","C":"12-20 psi","D":"20-30 psi","answer":"A"},
+{"question":"In 3-Phase loco (WAG9/WAP7), vertical clearances between Axle box and bogie frame in service limits:","A":"27 to 35 mm","B":"28 to 33 mm","C":"30 to 35 mm","D":"35 to 45 mm","answer":"A"},
+{"question":"Railway employees of GP Rs. 1900 & Rs. 2800 are eligible for which duty pass?","A":"2nd Class 'A'","B":"1st class","C":"2nd/Sleeper","D":"None of the above","answer":"A"},
+{"question":"In ALCO locomotive, S21 contactor is connected between which traction motors?","A":"3 and 6","B":"1 and 4","C":"2 and 5","D":"3 and 5","answer":"A"},
+{"question":"RCD uses how many measuring instruments for HSD oil receipt and issue?","A":"3","B":"2","C":"4","D":"1","answer":"A"},
+{"question":"If accident takes place within station section, how many officers jointly record the position?","A":"3","B":"2","C":"4","D":"5","answer":"A"},
+{"question":"Signal sighting committee will go on foot plate inspection once in how many months?","A":"3","B":"2","C":"4","D":"5","answer":"A"},
+{"question":"Number of fire detectors provided in WAG12B locomotives in each section:","A":"3","B":"4","C":"5","D":"6","answer":"A"},
+{"question":"Knowledge of detonator use tested by testing officials once in how many months?","A":"3","B":"4","C":"5","D":"6","answer":"A"},
+{"question":"Number of correction slips after which station working rules must be re-issued:","A":"3","B":"4","C":"5","D":"7","answer":"A"},
+{"question":"In three phase locomotive, number of roof bars provided:","A":"3","B":"4","C":"6","D":"8","answer":"A"},
+{"question":"Minimum implantation at obligatory mast:","A":"3.0 m","B":"3.2 m","C":"2.5 m","D":"2.75 m","answer":"A"},
+{"question":"In WAG-12B locomotive, when SA9 and PB applied, parking brake gauge shows:","A":"3.8 kg/cm²","B":"5 kg/cm²","C":"0 kg/cm²","D":"2.5 kg/cm²","answer":"A"},
+{"question":"Route indicators are of how many types?","A":"3; multiple, stencil & Junction","B":"2; colour light, semaphore","C":"All of the above","D":"None of the above","answer":"A"},
+{"question":"On detecting hammering sound on formation in block section, train crew observe speed restriction:","A":"30 kmph","B":"40 kmph","C":"50 kmph","D":"60 kmph","answer":"A"},
+{"question":"While driving from rear Motor coach in conventional EMU/MEMU (brake equipment working in leading MC), speed restriction:","A":"30 KMPH","B":"40 KMPH","C":"60 KMPH","D":"Normal Speeds","answer":"A"},
+{"question":"While coasting 40 BCN loaded goods train, energy saved for 1 km:","A":"30 units/km","B":"25 units/km","C":"40 units/km","D":"50 units/km","answer":"A"},
+{"question":"De-energize locomotives in yards when waiting for load for more than how many minutes?","A":"30","B":"15","C":"20","D":"45","answer":"A"},
+{"question":"Speed of trains on main line shall not exceed how many KMPH at non-interlocked station?","A":"30","B":"20","C":"35","D":"15","answer":"A"},
+{"question":"BPC of material train with UIC Bogie airbrake stock is valid for how many days?","A":"30; 15","B":"15; 5","C":"25; 10","D":"None","answer":"A"},
+{"question":"General target time for turning out of ART during day and night time:","A":"30; 45 minutes","B":"15; 20 minutes","C":"20; 15 minutes","D":"5; 10 minutes","answer":"A"},
+{"question":"At class 'B' station with multiple aspect signal, distance from home signal to outermost facing point:","A":"300 m","B":"200 m","C":"500 m","D":"180 m","answer":"A"},
+{"question":"TM Continuous Current Rating in SPIC:","A":"340 Amps","B":"450 Amps","C":"440 Amps","D":"500 Amps","answer":"A"},
+{"question":"Total voltage available in tapped winding in conventional EMU/MEMU:","A":"391 volts","B":"266 volts","C":"141 volts","D":"782 volts","answer":"A"},
+{"question":"In a month, number of 30-hour PRs and 22-hour PRs to be granted to running staff:","A":"4, 5","B":"4, 4","C":"5, 4","D":"5, 5","answer":"A"},
+{"question":"Number of 30-hour periodical rests that can be granted to running staff per month:","A":"4","B":"5","C":"3","D":"2","answer":"A"},
+{"question":"In AC traction, minimum height of contact wire under ROB/FOB to permit 'C' class ODC:","A":"4.92 m","B":"4.80 m","C":"4.65 m","D":"5.03 m","answer":"A"},
+{"question":"Speed of class 'B' ODC on BG shall not exceed:","A":"40 KMPH","B":"25 KMPH","C":"15 KMPH","D":"None","answer":"A"},
+{"question":"Time period for appeal under D & AR rules:","A":"45 days","B":"15 days","C":"30 days","D":"35 days","answer":"A"},
+{"question":"In three phase push pull locos, while both locos in service, cocks in closed position in rear loco pneumatic panel:","A":"47, 136","B":"70, 74","C":"136, 74","D":"70, 136","answer":"A"},
+{"question":"As per G&SR, rainfall above how much in 24 hours is dangerous for running trains?","A":"5 cm","B":"6 cm","C":"7 cm","D":"8 cm","answer":"A"},
+{"question":"CCL may not be granted less than how many days at a time?","A":"5 days","B":"2 days","C":"3 days","D":"4 days","answer":"A"},
+{"question":"In three phase locomotive, speed below which parking brakes can be applied:","A":"5 KMPH","B":"15 KMPH","C":"1.5 KMPH","D":"0 KMPH","answer":"A"},
+{"question":"In three phase locomotive, CSC can be activated above how many kmph?","A":"5","B":"1","C":"1.5","D":"15","answer":"A"},
+{"question":"B-5 blended HSD contains what percentage of Biodiesel?","A":"5%","B":"10%","C":"15%","D":"20%","answer":"A"},
+{"question":"In WAG-12B locomotive, regenerative brake will cut off when speed drops to:","A":"5 kmph","B":"10 kmph","C":"4 kmph","D":"3 kmph","answer":"A"},
+{"question":"In AC traction, minimum height of contact wire at level crossing from rail level (regulated OHE):","A":"5.50 m","B":"5.55 m","C":"5.60 m","D":"5.65 m","answer":"A"},
+{"question":"In AC traction, distance between two OHE conductors in insulated overlap:","A":"500 mm","B":"380 mm","C":"300 mm","D":"200 mm","answer":"A"},
+{"question":"Normal ex-gratia relief in cash for simple injury in train accident:","A":"Rs. 5,000","B":"Rs. 10,000","C":"Rs. 25,000","D":"Rs. 50,000","answer":"A"},
+{"question":"Normal ex-gratia relief in cash in case of death in train accident:","A":"Rs. 50,000","B":"Rs. 10,000","C":"Rs. 25,000","D":"Rs. 5,00,000","answer":"A"},
+{"question":"Safe working voltage limit for human contact under normal conditions:","A":"50V AC","B":"110V AC","C":"220V AC","D":"440V AC","answer":"A"},
+{"question":"Revised IOH Schedule of WAP-4 locomotive:","A":"54 months ±1 month or 9 lakh km, whichever is earlier","B":"54 months ±1 month or 12 lakh km, whichever is earlier","C":"36 months ±1 month or 6 lakh km, whichever is earlier","D":"72 months ±1 month or 8 lakh km, whichever is earlier","answer":"A"},
+{"question":"Over voltage relay energizes at how many volts in conventional EMU/MEMU?","A":"540 V","B":"4000 V","C":"900 V","D":"160 V","answer":"A"},
+{"question":"Maximum permissible speed for loaded long haul trains:","A":"55 kmph","B":"60 kmph","C":"65 kmph","D":"70 kmph","answer":"A"},
+{"question":"Loco running staff after availing Leave/Sick should be booked at what hours of subsequent day?","A":"6","B":"0","C":"8","D":"12","answer":"A"},
+{"question":"Coasting of goods train saves how many units/km?","A":"6","B":"10","C":"30","D":"20","answer":"A"},
+{"question":"In Train-18, when MR pressure drops below what kg/cm², Vmax becomes 0 kmph?","A":"6.5","B":"6.8","C":"7.5","D":"7.9","answer":"A"},
+{"question":"Whenever colour light signal is flickering and does not show steady aspect for how long, it is treated as defective?","A":"60 seconds","B":"120 seconds","C":"180 seconds","D":"None","answer":"A"},
+{"question":"RDAS detects distracted driving beyond 50 degrees from AI camera for more than how many seconds?","A":"60","B":"10","C":"30","D":"120","answer":"A"},
+{"question":"'W/L' board shall be provided before level crossing at a distance of:","A":"600 m","B":"1200 m","C":"1300 m","D":"1600 m","answer":"A"},
+{"question":"In WAG-12B locomotive, MCB number to trip for moving loco in PTDC mode in both sections:","A":"62 Q 06","B":"52 Q 06","C":"72 Q 06","D":"82 Q 06","answer":"A"},
+{"question":"As per G&SR, heavy winds above what KMPH is dangerous for running trains?","A":"65","B":"45","C":"30","D":"25","answer":"A"},
+{"question":"In Train-18, battery capacity in one basic unit:","A":"684 mAh","B":"228 mAh","C":"452 mAh","D":"124 mAh","answer":"A"},
+{"question":"In three phase MU locomotive (E-70 brake system), if slave loco is dead, close which cocks?","A":"70, 74, 136 and 47","B":"Only 74, 136","C":"Only 47, 136","D":"Only 70, 47","answer":"A"},
+{"question":"While working three phase loco (E70 brake system) as banker, close which cocks in Pneumatic panel?","A":"70; 136","B":"70; 74","C":"74; 136","D":"All the above","answer":"A"},
+{"question":"Indian Railways Specific Energy Consumption (Approx.) for goods train:","A":"8 KWH / 1000 GTKM","B":"20 KWH / 1000 GTKM","C":"30 KWH / 1000 GTKM","D":"40 KWH / 1000 GTKM","answer":"A"},
+{"question":"Number of Brake cylinders available in MC of conventional MEMU:","A":"8","B":"4","C":"16","D":"6","answer":"A"},
+{"question":"For Loco pilots of Mail/Express trains, running duty should not exceed:","A":"8 hours","B":"9 hours","C":"11 hours","D":"10 hours","answer":"A"},
+{"question":"In hydrodynamic transmission HS-SPARMV, normal transmission oil temperature is:","A":"80–100°C","B":"90–100°C","C":"100–120°C","D":"90–110°C","answer":"A"},
+{"question":"In WAG-12B loco, if one section transformer oil pump is failed, TE reduces to:","A":"85%","B":"70%","C":"50%","D":"No reduction","answer":"A"},
+{"question":"In WAG-12B loco, if one TCU is isolated, what % of max TE is available?","A":"87.5%","B":"50%","C":"75%","D":"None","answer":"A"},
+{"question":"Length of Arthur Flury make PTFE type neutral section:","A":"9.48 m","B":"5.64 m","C":"5.92 m","D":"6.21 m","answer":"A"},
+{"question":"In Automatic block system, TMR places detonators at what distances for protection?","A":"90 m; 180 m","B":"120 m; 150 m","C":"150 m; 300 m","D":"120 m; 180 m","answer":"A"},
+{"question":"Maximum output current of ATFEX in conventional locomotives:","A":"900 Amps","B":"850 Amps","C":"600 Amps","D":"700 Amps","answer":"A"},
+{"question":"In three phase locomotive, if battery voltage drops to how many volts for 30 seconds, P-2 message appears?","A":"92","B":"82","C":"90","D":"86","answer":"A"},
+{"question":"First aid boxes to be inspected by DMO once in:","A":"A month","B":"2 months","C":"3 months","D":"6 months","answer":"A"},
+{"question":"The term 'live wire' refers to:","A":"A wire carrying current","B":"A neutral wire","C":"A wire connected to earth","D":"A wire that is broken","answer":"A"},
+{"question":"It is mandatory to qualify which medical test for all running staff?","A":"A-1","B":"A-2","C":"B-1","D":"A-3","answer":"A"},
+{"question":"Regulated OHE is suitable for trains at speed:","A":"Above 100 KMPH","B":"Less than 100 KMPH","C":"Up to 80 KMPH","D":"Up to 90 KMPH","answer":"A"},
+{"question":"CLIs will test and check on run:","A":"Accurate working of speedometers","B":"Condition of speedometer cables/sensors","C":"Calibration of speedometer","D":"None of the above","answer":"A"},
+{"question":"In MPCS Version-3 locomotives, which lamp is provided to know VCD status when working cab DDU has failed?","A":"Additional LSVW lamp","B":"LS IP","C":"Add BPFA","D":"Add LSFI","answer":"A"},
+{"question":"In three phase push pull WAP-5 locos, if rear loco VCB is opened, which lamp glows in leading loco?","A":"Addl LSDJ","B":"Addl LSFI","C":"Addl BPFA","D":"None","answer":"A"},
+{"question":"In automatic section, when level crossing gate is open/failed and points set for mainline, which lamp lights on signal post?","A":"AG marker","B":"A marker","C":"Both A & B","D":"None of the above","answer":"A"},
+{"question":"Who is eligible to undergo training in Hindi Conversation course?","A":"All open line staff (including Class-IV) who contact public directly","B":"All open line staff","C":"Running staff","D":"Office staff","answer":"A"},
+{"question":"The anti-creep arrangement restricts OHE movement:","A":"Along the track","B":"Across the track","C":"Both across & along the track","D":"Neither across nor along the track","answer":"A"},
+{"question":"In three phase push pull WAP-5 locomotives, slave loco must be accompanied by not less than rank of:","A":"ALP","B":"Technician","C":"SSE","D":"JE","answer":"A"},
+{"question":"Material used for normal steady arm (BFB section):","A":"Aluminum alloy","B":"Aluminum bronze","C":"GI","D":"Cadmium copper","answer":"A"},
+{"question":"Section-4 of Workmen Compensation Act, 1923 describes:","A":"Amount of Compensation","B":"Compensation to be paid when due and penalty for default","C":"Both A & B","D":"None","answer":"A"},
+{"question":"Working of Level crossing gates is in which appendix of station working rules?","A":"Appendix A","B":"Appendix B","C":"Appendix C","D":"Appendix D","answer":"A"},
+{"question":"Priority in first aid for electrocution:","A":"Apply water to cool the burns","B":"Apply ointment immediately","C":"Rub the burnt area","D":"Remove burned clothing stuck to the skin","answer":"A"},
+{"question":"The speed required by a train to negotiate a rising gradient is called:","A":"Attacking speed","B":"Dynamic speed","C":"Constant speed","D":"Kinetic speed","answer":"A"},
+{"question":"In WDG4G locomotives, which switch temporarily overrides the AESS function?","A":"Auto stop override push button","B":"Blended brake","C":"AESS toggle","D":"None of the above","answer":"A"},
+{"question":"In CMS, SMS is which type of call serve?","A":"Automatic","B":"Manual","C":"Both A & B","D":"None of the above","answer":"A"},
+{"question":"NVR is provided in which power circuit in conventional EMU/MEMU?","A":"Aux 1","B":"Aux 2","C":"Power","D":"Low Tension","answer":"A"},
+{"question":"If Auxiliary Earth Fault lamp is glowing in SPIC, possible reason is:","A":"Auxiliary circuit power terminals/equipment are earthed","B":"Traction motor is earthed","C":"Main Generator is Earthed","D":"None of the above","answer":"A"},
+{"question":"Battery charger provided in which power circuit in conventional EMU/MEMU?","A":"Auxiliary I","B":"Auxiliary II","C":"Power circuit","D":"Tap changer circuit","answer":"A"},
+{"question":"During DMH brake application, which pressure is admitted to brake cylinders in conventional EMU/MEMU?","A":"Auxiliary Reservoir (BP)","B":"Main Reservoir (MR)","C":"Control Reservoir","D":"Parking Brake Reservoir","answer":"A"},
+{"question":"Which is an example of indicative accident?","A":"Averted collision","B":"Fire on train","C":"Collisions","D":"LC gate accidents","answer":"A"},
+{"question":"In WAP-4 locomotive bogie, Primary suspension is between:","A":"Axle; Bogie","B":"Bogie; Bolster","C":"Bolster; Body","D":"Bogie; Body","answer":"A"},
+{"question":"What type of isolating cocks are provided in passenger coaches?","A":"Ball type","B":"Wall type","C":"Done type","D":"Mac type","answer":"A"},
+{"question":"If engine is not cranking in a diesel locomotive, which switch should be checked in nose compartment?","A":"Battery Knife","B":"Engine Control","C":"MUSD","D":"Start","answer":"A"},
+{"question":"Reason for battery ammeter showing 'zero' in ALCO locomotive:","A":"Battery Switch Open","B":"AGFB Tripped","C":"VRP Defective","D":"AUX.GEN. Defective","answer":"A"},
+{"question":"Source of DC voltage:","A":"Battery","B":"Transformer","C":"Resistor","D":"None of these","answer":"A"},
+{"question":"Crew can Sign-ON/OFF using what in integrated KIOSK?","A":"Bio metric device","B":"By password","C":"Both compulsory","D":"None","answer":"A"},
+{"question":"Type of bogie provided in conventional EMU/MEMU:","A":"Bo-Bo Fabricated I Bolster","B":"Co-Co Fabricated Bolster","C":"Bo-Bo Flexi coil","D":"Bo-Bo Molded Bolster","answer":"A"},
+{"question":"While moving conventional loco as dead without MR and BC equalizing pipes, MR4 reservoir is charged with:","A":"BP","B":"FP","C":"MR","D":"None of the above","answer":"A"},
+{"question":"In Train-18, what is provided to protect DC link from surge voltages?","A":"Brake Chopper","B":"Crow bar","C":"IGBT","D":"Pre heeling diode","answer":"A"},
+{"question":"For releasing brake binding, after closing EPIC & AIC, what is to be pulled in conventional EMU/MEMU?","A":"Brake Release Handle","B":"EPIC Switch","C":"EPIC COC","D":"AIC COC","answer":"A"},
+{"question":"Force on coupler when pushing wagon/coach:","A":"Buff force","B":"Transverse force","C":"Draft force","D":"Transit force","answer":"A"},
+{"question":"Eight wheeler brake van with ICF trolley is named as:","A":"BVZI","B":"BVZT","C":"BVZC","D":"BVCM","answer":"A"},
+{"question":"Which programming language is known as the mother of all software languages?","A":"C","B":"Python","C":"Java","D":"None of these","answer":"A"},
+{"question":"In conventional locomotives, earth fault in C118 contactor coil causes which fuse to melt?","A":"CCDJ","B":"Addl. CCBA","C":"CCPT","D":"CCBA","answer":"A"},
+{"question":"Crew links can be prepared by using which program of CRIS?","A":"CCLMS","B":"RTIS","C":"COA","D":"FOIS","answer":"A"},
+{"question":"In conventional locomotives, earth fault in line contactors coils causes which fuse to melt?","A":"CCPT","B":"CCA","C":"CCDJ","D":"CCLSA","answer":"A"},
+{"question":"In Train-18, for rake level operations, which is the main processor?","A":"CCU","B":"MCU","C":"ACU","D":"PCU","answer":"A"},
+{"question":"Which of the following is a minor penalty under D&A Rules?","A":"Censure","B":"Compulsory retirement","C":"Dismissal","D":"Removal from service","answer":"A"},
+{"question":"Regulated hours of work and period of rest are dealt in:","A":"Chapter XIV of Indian Railways Act, 1989","B":"Chapter XIV of Indian Railways Act, 1990","C":"Chapter XV of Indian Railways Act, 1992","D":"Chapter XVI of Indian Railways Act, 1996","answer":"A"},
+{"question":"Under what circumstances can an 'ex-parte' inquiry be held?","A":"Charged official does not appear before inquiry officer on more than two occasions","B":"Presenting Officer does not appear before inquiry officer","C":"Disciplinary Authority does not appear before inquiry officer","D":"None of these","answer":"A"},
+{"question":"In WAG-12B locomotive, which position of HHTs allows raising of single pantograph?","A":"Close","B":"Open","C":"Neutral","D":"All the above","answer":"A"},
+{"question":"In three phase MU locomotives, 136 cock position in slave locomotive is:","A":"Close","B":"Open","C":"Neutral","D":"Up","answer":"A"},
+{"question":"The disciplinary proceedings should be on the death of the charged employee:","A":"Closed immediately","B":"Continued","C":"Transferred to next employee","D":"None of these","answer":"A"},
+{"question":"In CMS, User password should NOT contain:","A":"User name and user ID","B":"Crew ID","C":"Special Character","D":"All the above","answer":"D"},
+{"question":"In WAG-12B loco, if emergency brake is applied above 3 kmph speed, what happens?","A":"VCB open","B":"Panto lower","C":"BP pressure drop","D":"All the above","answer":"D"},
+{"question":"If carbon strip of WBL-85 pantograph is damaged, which device activates to lower the pantograph?","A":"VEPT","B":"ORD","C":"Throttle valve","D":"ADD","answer":"D"},
+{"question":"Transformer ratings are usually expressed in terms of:","A":"Volts","B":"Amperes","C":"KW","D":"kVA","answer":"D"},
+{"question":"In AC conventional locomotives, what type of fire extinguishers are provided?","A":"Water coolant","B":"Foam","C":"CO2","D":"DCP","answer":"D"},
+{"question":"Point indicator when point is set for loop line shows during day and night respectively:","A":"White Target; White","B":"Green Target; Green light","C":"No Target; White","D":"No Target; Green","answer":"D"},
+{"question":"In accident involving passenger train, the senior officer at site must secure witnesses by recording:","A":"Witness statement","B":"Address","C":"Name and age","D":"All the above","answer":"D"},
+{"question":"What is provided at fish plate joint of track?","A":"Z bond","B":"IR bond","C":"IT bond","D":"L bond","answer":"D"},
+{"question":"In WDG4G locomotives, CA2, CA3, CA4 & CA5 are located in:","A":"Engine Cab","B":"Operator Cab","C":"Blower Cab","D":"Aux Cab","answer":"D"},
+{"question":"In FOIS, if loco status showing 'I', it indicates:","A":"Intensive","B":"Intermittent","C":"Inaugural","D":"Ineffective","answer":"D"},
+{"question":"Authority for issuing the working time table:","A":"PCOM","B":"CPTM","C":"DRM","D":"PCOM & CPTM","answer":"D"},
+{"question":"Loco pilots should report mid-section loco failures to:","A":"TPC","B":"Safety counselor","C":"Punctuality Controller","D":"TLC/PCOR","answer":"D"},
+{"question":"In FOIS if loco service showing 'P', it indicates:","A":"Passing","B":"Progress","C":"Passive","D":"Passenger","answer":"D"},
+{"question":"In three phase EMU/MEMU, after inserting DCS & ICS key, which icon shows Blue indicating system ready?","A":"VCB icon","B":"Panto icon","C":"MAC icon","D":"Cab occupancy icon","answer":"D"},
+{"question":"Revised IOH schedule of WAG-9 locomotive:","A":"96 months (8 years) ±3 months or 12 lakh km","B":"84 months (7 years) ±3 months or 16 lakh km","C":"60 months (5 years) ±6 months or 16 lakh km","D":"72 months (6 years) ±6 months or 8 lakh km","answer":"D"},
+{"question":"In three phase MU locos, if Z-Cab switch unavailable, operate VCU reset switch in which loco?","A":"Leading","B":"Leading Cab","C":"Trailing cab of leading","D":"Trailing","answer":"D"},
+{"question":"To extinguish fire in three phase locomotives, what precautions to be taken?","A":"Open DJ","B":"Lower pantograph","C":"Trip MCB 112.1 if possible","D":"All the above","answer":"D"},
+{"question":"Testing of detonator — done by moving empty wagon at speed of how many kmph?","A":"5","B":"12","C":"15","D":"8–11","answer":"D"},
+{"question":"For lateral induction for post of ALP, what type of selection is done?","A":"GDCE","B":"LDCE","C":"RRC","D":"Either A or B","answer":"D"}
+];
+
+// STATE
+let selectedQ = [], userAns = [], timerInt = null, totalSec = 0, remSec = 0, quizActive = false;
+
+// UTILITIES
+function seededShuffle(arr) {
+  let seed = Date.now() % 100000;
+  const rng = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+  for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
+}
+function toast(msg, ms = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), ms);
+}
+function scoreMsg(pct) {
+  if (pct >= 90) return '🏆 Outstanding! You are exam-ready!';
+  if (pct >= 75) return '🌟 Excellent work! Keep it up!';
+  if (pct >= 60) return '👍 Good job! More practice will help.';
+  if (pct >= 40) return '📚 Keep studying — you can do it!';
+  return '💪 Don\'t give up! Practice makes perfect.';
+}
+
+// PILLS
+function setNum(n) {
+  document.getElementById('numQ').value = Math.min(n, quizData.length);
+  document.querySelectorAll('#p10,#p25,#p50,#p100,#pall').forEach(p => p.classList.remove('active'));
+  const map = {10:'p10', 25:'p25', 50:'p50', 100:'p100'};
+  if (n >= quizData.length) document.getElementById('pall').classList.add('active');
+  else if (map[n]) document.getElementById(map[n]).classList.add('active');
+}
+function setTime(m) {
+  document.getElementById('timeMin').value = m;
+  document.querySelectorAll('#t15,#t30,#t60,#t90').forEach(p => p.classList.remove('active'));
+  const map = {15:'t15', 30:'t30', 60:'t60', 90:'t90'};
+  if (map[m]) document.getElementById(map[m]).classList.add('active');
+}
+
+// START QUIZ
+function startQuiz() {
+  const numQ = Math.min(parseInt(document.getElementById('numQ').value), quizData.length);
+  const mins = parseInt(document.getElementById('timeMin').value);
+  if (isNaN(numQ) || numQ < 1) { toast('⚠️ Please enter a valid number of questions.'); return; }
+  if (isNaN(mins) || mins < 1) { toast('⚠️ Please enter a valid time in minutes.'); return; }
+  seededShuffle(quizData);
+  selectedQ = quizData.slice(0, numQ);
+  userAns = new Array(numQ).fill(null);
+  remSec = totalSec = mins * 60;
+  quizActive = true;
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('review-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'flex';
+  document.getElementById('timer-bar').style.display = 'block';
+  renderQuiz();
+  startTimer();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// RENDER QUIZ
+function renderQuiz() {
+  const cont = document.getElementById('quiz-screen');
+  cont.innerHTML = '';
+  selectedQ.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'question-card fade-in';
+    card.id = 'qc' + i;
+    card.style.animationDelay = Math.min(i * 0.03, 0.5) + 's';
+    const opts = ['A','B','C','D'].map(o => `
+      <label class="option-label" id="ol-${i}-${o}" onclick="pick(${i},'${o}')">
+        <input type="radio" name="q${i}" value="${o}">
+        <div class="option-marker">${o}</div>
+        <span class="option-text">${q[o]}</span>
+      </label>`).join('');
+    card.innerHTML = `<div class="q-header"><div class="q-num">${i+1}</div><p class="q-text">${q.question}</p></div><div class="options-grid">${opts}</div>`;
+    cont.appendChild(card);
+  });
+  const sb = document.createElement('div');
+  sb.style.cssText = 'display:flex;justify-content:center;margin-top:8px;';
+  sb.innerHTML = '<button class="btn-primary" style="padding:16px 40px;font-size:16px;font-family:inherit;" onclick="confirmSubmit()">✅ Submit Quiz</button>';
+  cont.appendChild(sb);
+  updateProg();
+}
+
+// SELECT ANSWER
+function pick(i, o) {
+  userAns[i] = o;
+  ['A','B','C','D'].forEach(x => { const el = document.getElementById(`ol-${i}-${x}`); if (el) el.classList.toggle('selected', x===o); });
+  updateProg();
+}
+function updateProg() {
+  const done = userAns.filter(a => a !== null).length;
+  const pct = selectedQ.length > 0 ? (done/selectedQ.length)*100 : 0;
+  document.getElementById('progress-bar-fill').style.width = pct+'%';
+  document.getElementById('progress-label').textContent = `${done} / ${selectedQ.length} answered`;
+}
+
+// TIMER
+function startTimer() {
+  updateTimerUI();
+  timerInt = setInterval(() => { remSec--; updateTimerUI(); if (remSec <= 0) { clearInterval(timerInt); timeUp(); } }, 1000);
+}
+function updateTimerUI() {
+  const el = document.getElementById('timer-display');
+  const m = Math.floor(Math.abs(remSec)/60), s = Math.abs(remSec)%60;
+  el.textContent = `⏱ ${m}:${s.toString().padStart(2,'0')}`;
+  el.className = remSec <= 60 ? 'danger' : remSec <= totalSec*0.25 ? 'warning' : '';
+}
+function timeUp() { quizActive = false; document.getElementById('timeup-overlay').classList.add('show'); }
+function closeTimeUp() { document.getElementById('timeup-overlay').classList.remove('show'); showReview(true); }
+
+// SUBMIT
+function confirmSubmit() {
+  const unanswered = userAns.filter(a => a === null).length;
+  if (unanswered > 0) {
+    toast(`⚠️ ${unanswered} unanswered. Click Submit again to confirm.`);
+    const btn = document.getElementById('submit-btn-top');
+    if (btn) {
+      const orig = btn.onclick;
+      btn.textContent = 'Confirm Submit ✔';
+      btn.onclick = () => { clearInterval(timerInt); quizActive = false; showReview(false); };
+      setTimeout(() => { if (quizActive) { btn.textContent = 'Submit Quiz'; btn.onclick = confirmSubmit; } }, 4000);
+    }
+    return;
+  }
+  clearInterval(timerInt); quizActive = false; showReview(false);
+}
+
+// SHOW REVIEW
+function showReview(auto) {
+  quizActive = false; clearInterval(timerInt);
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('timer-bar').style.display = 'none';
+  document.getElementById('setup-screen').style.display = 'none';
+  const rv = document.getElementById('review-screen');
+  rv.style.display = 'flex';
+  let ok=0, bad=0, skip=0;
+  selectedQ.forEach((q,i) => { const a = userAns[i]; if (!a) skip++; else if (a===q.answer) ok++; else bad++; });
+  const tot = selectedQ.length, pct = tot > 0 ? Math.round((ok/tot)*100) : 0;
+  let html = `<div class="score-hero fade-in">
+    <div class="score-label">${auto ? '⏰ Time\'s Up! ' : ''}Quiz Complete!</div>
+    <div><span class="score-big">${ok}</span><span class="score-denom"> / ${tot}</span></div>
+    <div class="score-percentage">${pct}% Score</div>
+    <div class="pct-bar-wrap"><div class="pct-bar-fill" style="width:${pct}%"></div></div>
+    <div class="score-message">${scoreMsg(pct)}</div>
+    <div class="score-stats">
+      <div class="score-stat correct-stat">✅ ${ok} Correct</div>
+      <div class="score-stat wrong-stat">❌ ${bad} Wrong</div>
+      <div class="score-stat skip-stat">⏭ ${skip} Skipped</div>
+    </div>
+    <div class="action-row">
+      <button class="btn-secondary" onclick="retake()">🔄 Retake Quiz</button>
+      <button class="btn-primary" onclick="newQuiz()">🏠 New Quiz</button>
+    </div>
+  </div>
+  <div class="review-section-title">📋 Detailed Review</div>`;
+  selectedQ.forEach((q,i) => {
+    const ua = userAns[i], isOk = ua === q.answer;
+    const qcls = !ua ? 'skip-q' : isOk ? 'correct-q' : 'wrong-q';
+    const qico = !ua ? '—' : isOk ? '✓' : '✗';
+    let opts = '';
+    ['A','B','C','D'].forEach(o => {
+      const isAns = q.answer===o, isUser = ua===o;
+      const cls = isAns ? 'correct-opt' : (isUser && !isAns) ? 'wrong-opt' : '';
+      const ico = isAns ? '✔' : (isUser && !isAns) ? '✖' : '·';
+      opts += `<div class="review-opt ${cls}"><span class="opt-icon">${ico}</span><span><strong>${o}.</strong> ${q[o]}</span></div>`;
+    });
+    html += `<div class="review-card">
+      <div class="review-q-text"><div class="review-q-num ${qcls}">${qico}</div><span>${i+1}. ${q.question}</span></div>
+      <div class="review-options">${opts}</div>
+      ${!ua ? '<div><span class="not-answered-tag">Not answered</span></div>' : ''}
+    </div>`;
+  });
+  rv.innerHTML = html;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function retake() {
+  const n = selectedQ.length, m = Math.ceil(totalSec/60);
+  document.getElementById('numQ').value = n;
+  document.getElementById('timeMin').value = m;
+  newQuiz(); setTimeout(startQuiz, 50);
+}
+function newQuiz() {
+  clearInterval(timerInt); quizActive = false;
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('timer-bar').style.display = 'none';
+  document.getElementById('review-screen').style.display = 'none';
+  document.getElementById('setup-screen').style.display = 'flex';
+  document.getElementById('timer-display').textContent = '⏱ 00:00';
+  document.getElementById('timer-display').className = '';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.getElementById('setup-screen').style.display = 'flex';
+</script>
+</body>
+</html>
